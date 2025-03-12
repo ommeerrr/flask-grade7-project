@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Quiz</h1>
+    <form id="quizForm">
+        {% for q in questions %}
+        <div class="question">
+            <p><strong>{{ q.id }}</strong>: {{ q.instruction }}</p>
+            <p>{{ q.input }}</p>
+            
+            {% if q.type == "Multiple Choice" %}
+                {% for option in q.options %}
+                <label>
+                    <input type="radio" name="{{ q.id }}" value="{{ option }}">
+                    {{ option }}
+                </label><br>
+                {% endfor %}
+            
+            {% elif q.type == "Short Answer" %}
+                <textarea name="{{ q.id }}" rows="2"></textarea>
+            
+            {% endif %}
+        </div>
+        {% endfor %}
+        <button type="button" onclick="submitQuiz()">Submit</button>
+    </form>
+
+    <script>
+        async function submitQuiz() {
+            const answers = {};
+            const form = document.getElementById("quizForm");
+            
+            // Collect answers
+            form.querySelectorAll("input, textarea").forEach(input => {
+                if (input.checked || input.value.trim()) {
+                    answers[input.name] = {
+                        answer: input.value.trim(),
+                        type: input.type === "radio" ? "Multiple Choice" : "Short Answer"
+                    };
+                }
+            });
+            
+            // Send answers to backend
+            const response = await fetch("/check_answers", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(answers)
+            });
+            
+            const results = await response.json();
+            window.location.href = `/result?score=${results.score}`;
+        }
+    </script>
+</body>
+</html>
