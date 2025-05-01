@@ -56,7 +56,7 @@ def index():
         return render_template("result.html", correct_option=correct_option)
 
     # Render the input form for GET requests
-    return render_template("index.html")
+    return render_template("home.html")
 
 @app.route("/random", methods=["GET"])
 def random_quiz():
