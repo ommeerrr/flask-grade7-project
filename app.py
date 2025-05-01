@@ -58,15 +58,15 @@ def index():
     # Render the input form for GET requests
     return render_template("home.html")
 
-@app.route("/random", methods=["GET"])
+@app.route("/Home", methods=["GET"])
 def random_quiz():
     # Select a random question
     if not mc_questions:
         flash("No questions available in the dataset!", "error")
-        return redirect(url_for("index"))
+        return redirect(url_for("Home"))
 
     question = random.choice(mc_questions)
-    return render_template("index.html", question=question)
+    return render_template("Home.html", question=question)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
