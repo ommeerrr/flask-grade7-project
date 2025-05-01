@@ -1,15 +1,23 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
     margin: 20px;
     padding: 20px;
     max-width: 800px;
     margin: auto;
+    background-color: #f9f9f9;
 }
 
 .question {
-    margin-bottom: 20px;
-    padding: 10px;
+    margin-bottom: 25px;
+    padding: 15px;
     border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: white;
+}
+
+.option-label {
+    display: block;
+    padding: 5px 0;
 }
 
 button {
@@ -18,8 +26,24 @@ button {
     padding: 10px 20px;
     border: none;
     cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
 }
 
 button:hover {
     background-color: #45a049;
+}
+
+.back-btn {
+    display: inline-block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: white;
+    background-color: #6c757d;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.back-btn:hover {
+    background-color: #5a6268;
 }

@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, jsonify, render_template, request, flash, redirect, session, url_for
 import pickle
 import numpy as np
 import json
 import random
+
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"  # Required for flashing messages
@@ -57,7 +58,7 @@ def index():
         correct_option = options[correct_option_index]
 
         # Render the result page
-        return render_template("result.html", correct_option=correct_option)
+        return render_template("result.html", correct_option=correct_option, options=options)
 
     # Render the input form for GET requests
     return render_template("index.html")
@@ -71,6 +72,39 @@ def random_quiz():
 
     question = random.choice(mc_questions)
     return render_template("index.html", question=question)
+
+# Update the /quiz route to store correct answers in session
+@app.route("/quiz")
+def quiz():
+    if not mc_questions:
+        flash("No questions available in the dataset!", "error")
+        return redirect(url_for("home"))
+    
+    selected_questions = random.sample(mc_questions, min(5, len(mc_questions)))
+    
+    # Store correct answers in session for later validation
+    session['quiz_answers'] = {q['instruction']: q['correct_option'] for q in selected_questions}
+    
+    return render_template("quiz.html", questions=selected_questions)
+
+# New route to process quiz answers and return score
+@app.route("/check_answers", methods=["POST"])
+def check_answers():
+    user_answers = request.get_json()
+    correct_answers = session.get('quiz_answers', {})
+    
+    score = 0
+    for question, data in user_answers.items():
+        if data['answer'].strip().lower() == correct_answers.get(question, "").strip().lower():
+            score += 1
+    
+    session.pop('quiz_answers', None)  # Clean up session
+    return jsonify({'score': score})
+
+@app.route("/result")
+def result():
+    score = request.args.get('score', default=0, type=int)
+    return render_template("result.html", score=score)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)

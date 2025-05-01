@@ -55,6 +55,7 @@
                         <input type="text" class="form-control" id="option4" name="option4" value="{{ question.options[3] if question }}" required>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Generate Quiz</button>
+                    <a href="{{ url_for('home') }}" class="back-btn">← Back to Home</a>
                 </form>
             </div>
         </div>

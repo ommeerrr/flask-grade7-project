@@ -14,19 +14,17 @@
             
             {% if q.type == "Multiple Choice" %}
                 {% for option in q.options %}
-                <label>
-                    <input type="radio" name="{{ q.id }}" value="{{ option }}">
+                <label class="option-label">
+                    <input type="radio" name="{{ q.instruction }}" value="{{ option }}">
                     {{ option }}
                 </label><br>
                 {% endfor %}
-            
-            {% elif q.type == "Short Answer" %}
-                <textarea name="{{ q.id }}" rows="2"></textarea>
-            
             {% endif %}
         </div>
         {% endfor %}
+        
         <button type="button" onclick="submitQuiz()">Submit</button>
+        <a href="{{ url_for('home') }}" class="back-btn">← Back to Home</a>
     </form>
 
     <script>
@@ -34,17 +32,13 @@
             const answers = {};
             const form = document.getElementById("quizForm");
             
-            // Collect answers
-            form.querySelectorAll("input, textarea").forEach(input => {
-                if (input.checked || input.value.trim()) {
-                    answers[input.name] = {
-                        answer: input.value.trim(),
-                        type: input.type === "radio" ? "Multiple Choice" : "Short Answer"
-                    };
-                }
+            form.querySelectorAll("input[type='radio']:checked").forEach(input => {
+                answers[input.name] = {
+                    answer: input.value,
+                    type: "Multiple Choice"
+                };
             });
             
-            // Send answers to backend
             const response = await fetch("/check_answers", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
