@@ -21,7 +21,11 @@ with open("dataset.txt", "r", encoding="utf-8") as f:
 # Filter multiple-choice questions
 mc_questions = [entry for entry in dataset if entry["type"] == "Multiple Choice"]
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET"])
+def home():
+    return render_template("home.html")
+
+@app.route("/index", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
         # Get user input from the form
@@ -56,17 +60,17 @@ def index():
         return render_template("result.html", correct_option=correct_option)
 
     # Render the input form for GET requests
-    return render_template("home.html")
+    return render_template("index.html")
 
-@app.route("/Home", methods=["GET"])
+@app.route("/random", methods=["GET"])
 def random_quiz():
     # Select a random question
     if not mc_questions:
         flash("No questions available in the dataset!", "error")
-        return redirect(url_for("Home"))
+        return redirect(url_for("index"))
 
     question = random.choice(mc_questions)
-    return render_template("Home.html", question=question)
+    return render_template("index.html", question=question)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
